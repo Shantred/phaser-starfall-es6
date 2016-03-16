@@ -8,8 +8,8 @@ export default class Star extends Phaser.Sprite {
 
     this.health = health;
     this.game = game;
-    //this.checkWorldBounds = true;
-    this.outOfBoundsKill = false;
+    this.checkWorldBounds = true;
+    this.outOfBoundsKill = true;
   }
 
   damage(amount) {

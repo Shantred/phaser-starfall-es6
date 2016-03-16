@@ -2,24 +2,30 @@ import Player from '../prefabs/player';
 import Star from '../prefabs/star';
 import Diamond from '../prefabs/diamond';
 import HUD from '../prefabs/hud';
-//import Floor from '../prefabs/floor';
+import Floor from '../prefabs/floor';
 
 export default class Play extends Phaser.State {
 
   create() {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    
+    // HUD
+    this.hud = new HUD({
+      game: this.game
+    });
+
     this.platforms = this.add.group();
 
     // Create floor
-    // this.floor = new Floor({
-    //   game: this.game
-    // });
-    this.floor = this.game.add.tileSprite(0, this.game.world.height - 32, 400, 32, 'new_ground');
-    this.game.physics.arcade.enable(this.floor);
-    this.floor.body.allowGravity = false;
-    this.floor.immovable = true;
+    this.floor = new Floor({
+      game: this.game,
+      x: 0,
+      y: this.game.world.height - 32,
+      width: 400,
+      height: 32,
+      asset: 'new_ground'
+    });
+
     this.platforms.add(this.floor);
 
     // Add player to world
@@ -27,22 +33,11 @@ export default class Play extends Phaser.State {
       game: this.game,
       x: this.game.world.width/2 - 32,
       y: this.game.world.height - 150,
-      health: 10,
-      asset: 'dude'
+      asset: 'dude',
+      health: 10
     });
-
-    this.game.physics.arcade.enable(this.player);
-    this.player.body.bounce.y = 0;
-    this.player.body.gravity.y = 300;
-    this.player.body.collideWorldBounds = true;
-    this.player.body.setSize(28, 36, 2, 12);
 
     this.game.stage.addChild(this.player);
-
-    // HUD
-    this.hud = new HUD({
-      game: this.game
-    });
 
     // Create groups to hold our spawnable units
     this.stars = this.add.group();
@@ -51,6 +46,7 @@ export default class Play extends Phaser.State {
     this.diamonds = this.add.group();
     this.diamonds.enableBody = true;
 
+    // Game Settings
     this.minXGravity = 800;
     this.maxXGravity = 600;
 
