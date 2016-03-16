@@ -1,0 +1,19 @@
+{
+  "name": "ES6 Phaser Starfall",
+  "description": "Avalance-type game made with Phaser",
+  "authors": [
+    "Eric South"
+  ],
+  "license": "WTFPL",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "phaser": "~2.4.6"
+  }
+}

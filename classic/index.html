@@ -1,0 +1,341 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+  <meta charset="UTF-8" />
+  <title>Phaser - Starfall Game 2.0</title>
+  <script type="text/javascript" src="js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var game = new Phaser.Game(400, 480, Phaser.AUTO, '', { preload: preload, create: create, update: update});
+
+WebFontConfig = {
+    //active: function() { game.time.events.add(Phaser.Timer.SECOND, createText, this); },
+
+    //  The Google Fonts we want to load (specify as many as you like in the array)
+    google: {
+      families: ['Play']
+    }
+
+};
+
+function preload() {
+  game.load.image('sky', 'assets/day.png');
+  game.load.image('ground', 'assets/platform.png');
+  game.load.image('new_ground', 'assets/Basic_Ground_Top_Pixel.png');
+  game.load.image('star', 'assets/star.png');
+  game.load.spritesheet('diamond', 'assets/diamond.png', 32, 28);
+  game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+  game.load.spritesheet('restart', 'assets/blue_button.png', 200, 48);
+
+  game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+}
+
+// Physics variables
+var vertGravity = 300;
+var maxXGravity = 600;
+var minXGravity = 800;
+
+// UI
+var score = 0;
+var highScore = 0;
+var scoreText;
+var button;
+var gameOverText;
+var restart;
+
+// Game
+var paused = false;
+var playerHealth = 10; // Default is 10, every star that hits does 10 damage
+
+var starLevel = 0; // Used in calculating time before next star spawn. Higher level = faster spawn time on new games
+var starSpawnTime = 500; // Starting time between star spawns
+var starNewLevel = 3000; // How often starLevel should be increased
+var minStarSpawn = 100; // Fastest possible speed that stars can spawn. Default 100
+
+// Timekeeping
+var starTimer = 0;
+var starLevelTimer = 0;
+
+function create() {
+  game.physics.startSystem(Phaser.Physics.ARCADE);
+
+  game.add.sprite(0,0, 'sky');
+
+  // Add ground and tile across bottom of the screen
+  ground = game.add.tileSprite(0, game.world.height - 32, 400, 32, 'new_ground');
+  game.physics.arcade.enable(ground);
+  ground.body.allowGravity = false;
+  ground.body.immovable = true;
+
+  platforms = game.add.group();
+  platforms.add(ground);
+
+  createHero();
+
+  cursors = game.input.keyboard.createCursorKeys();
+
+  stars = game.add.group();
+  stars.enableBody = true;
+
+  diamonds = game.add.group();
+  diamonds.enableBody = true;
+
+  // Spawn the first star
+  spawnStars();
+
+  scoreText = game.add.text(16,16, 'Score: 0');
+  scoreText.font = 'Play';
+  scoreText.fontSize = 22;
+  scoreText.fontWeight = 'bold';
+
+  // Initialize game over text so it can be later modified
+  gameOverText = game.add.text(game.world.centerX, game.world.centerY, "Game Over! \n Final Score: " + score + " \n High Score: " + highScore);
+  gameOverText.font = 'Play';
+  gameOverText.fontSize = 32;
+  gameOverText.align = 'center';
+  gameOverText.visible = false;
+
+  game.input.addPointer();
+
+  
+
+}
+
+function update() {
+  game.physics.arcade.collide(player, platforms);
+  game.physics.arcade.collide(diamonds, platforms, diamondDecay, null, this);
+  game.physics.arcade.overlap(player, stars, doDamage, null, this);
+  game.physics.arcade.overlap(player, diamonds, collectBonus, null, this);
+
+
+  if ( !paused ) {
+
+    // Set stars velocity to static value
+    starTimer += game.time.elapsed;
+    starLevelTimer += game.time.elapsed;
+
+    // When defined period of time has passed, increase starLevel
+    if ( starLevelTimer > starNewLevel ) {
+      starLevelTimer = 0;
+      starLevel++;
+    }
+
+    // calculate time to spawn a new star
+    // Takes base start time and subtracts 20ms for every starLevel
+    var starTimeToSpawn = starSpawnTime - (starLevel * 20);
+
+    // Do not allow startTimeToSpawn to go below minStarSpawn
+    if ( starTimeToSpawn < minStarSpawn )
+      starTimeToSpawn = minStarSpawn;
+
+    if (starTimer >= starTimeToSpawn ) {
+      spawnStars();
+      starTimer = 0;
+      
+    }
+
+    // Stop all horizontal movement without acceleration
+    player.body.velocity.x = 0;
+
+    if (cursors.left.isDown || ( game.input.pointer1.x < 199 && game.input.pointer1.isDown )) {
+      // move left
+      player.body.velocity.x = -275;
+      player.animations.play('left');
+    } else if ( cursors.right.isDown || (game.input.pointer1.x > 200 && game.input.pointer1.isDown )) {
+      player.body.velocity.x = 275;
+      player.animations.play('right');
+    } else {
+      player.animations.stop();
+      player.frame = 4;
+    }
+
+  }
+}
+
+
+function doDamage(player, star)
+{
+  // Only do any of this if the game is not paused
+    if( !paused ) {
+    console.log("Taking 10 from" + playerHealth);
+    playerHealth -= 10;
+
+    if ( playerHealth <= 0 ) {
+      paused = true;
+      
+      player.animations.currentAnim.paused = true;
+      player.body.velocity.x = null;
+      player.body.velocity.y = null;
+      player.body.gravity.y = null;
+
+      stars.forEach(function(star){
+        star.body.velocity.y = null;
+        star.body.gravity.y = null;
+      })
+      diamonds.forEach(function(diamond){
+        diamond.body.velocity.y = null;
+        diamond.body.gravity.y = null;
+        diamond.animations.getAnimation('blink').stop();
+      })
+      scoreText.visible = false;
+
+      // if ( score > highScore )
+      //  highScore = score;
+
+      if (this.game.device.localStorage) {
+          localStorage.score = score;
+          if (localStorage.highScore) {
+              if ( score > localStorage.highScore) {
+                  localStorage.highScore = localStorage.score;
+              }
+          }
+          else {
+              localStorage.highScore = localStorage.score;
+          }
+      }
+
+      // Reset level
+      starLevel = 0;
+
+      gameOverText.setText("Game Over! \n Final Score: " + score + " \n High Score: " + localStorage.highScore );
+      gameOverText.anchor.setTo(0.5, 0.5);
+      gameOverText.visible = true;
+      button = game.add.button(game.world.centerX - 100, game.world.centerY + 55, 'restart', actionOnClick, this, 0, 0, 0);
+      restart = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+      restart.onDown.add(actionOnClick, this);
+    } else {
+
+      // Only remove the damaging star when the player is alive.
+      // If they have lost, we want them to see the star that killed them
+      removeStar(star);
+    }
+
+  }
+
+}
+
+function actionOnClick()
+{
+  paused = false;
+  button.kill();
+  stars.forEach(function(star){
+    star.kill();
+  });
+  diamonds.forEach(function(diamond) {
+    diamond.kill();
+  });
+  player.kill();
+  playerHealth = 10;
+  score = 0;
+  scoreText.setText('Score: 0');
+  scoreText.visible = true;
+  gameOverText.visible = false;
+  createHero();
+  restart.onDown.remove(actionOnClick, this);
+
+}
+
+// Stars should fall from a random x from top of screen, starting 1 every second
+// every 10 seconds, reduce the time between stars by 50ms.
+// stars should not spawn faster than every 100ms.
+function spawnStars()
+{
+  // There is a 1 in 90 chance of a diamond spawning instead of a star.
+  diamondChance = game.rnd.integerInRange(1, 75);
+
+  if ( diamondChance == 1 ) { // Just a random #. This could be anything
+    spawnDiamonds();
+    return;
+  }
+
+  // Spawn star within bounds of viewport
+  var starStart = game.rnd.integerInRange(1, game.world.width-22);
+
+  var starGravity = game.rnd.integerInRange(minXGravity, maxXGravity);
+
+  // Create a star at random x and above screen
+  var star = stars.create(starStart, -22, 'star');
+
+  // Give each star random gravity between min and max values
+  star.body.gravity.y = starGravity;
+
+  // Handle stars going off the map
+  star.checkWorldBounds = true;
+  star.events.onOutOfBounds.add(removeStar, this);
+}
+
+function spawnDiamonds()
+{
+  var diamondStart = game.rnd.integerInRange(1, game.world.width-32);
+
+  // Create a star at random x and above screen
+  var diamond = diamonds.create(diamondStart, -22, 'diamond');
+
+  // Give each star random gravity between min and max values
+  diamond.body.gravity.y = maxXGravity;
+
+  diamond.scale.set(0.8);
+
+  diamond.animations.add('blink', [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 15, false);
+
+}
+
+function removeStar(star)
+{
+  star.kill();
+  addScore(5);
+}
+
+function createHero()
+{
+  player = game.add.sprite(game.world.width/2 - 32, game.world.height - 150, 'dude');
+  game.physics.arcade.enable(player);
+
+  player.body.bounce.y = 0;
+  player.body.gravity.y = vertGravity;
+  player.body.collideWorldBounds = true;
+
+  player.animations.add('left', [0,1,2,3], 10, true);
+  player.animations.add('right', [5,6,7,8], 10, true);
+
+  // shrink hitbox to more closely fit visible portion of sprite
+  player.body.setSize(28,36, 2,12);
+}
+
+function diamondDecay(diamond)
+{ 
+  // Check if our blink animation is already playing
+  if ( !diamond.animations.getAnimation('blink').isPlaying ) {
+    // play animation once without loop and kill sprite after
+    diamond.animations.getAnimation('blink').play(15, false, true);
+  }
+  
+}
+
+function collectBonus(player, bonus)
+{
+  addScore(50);
+  bonus.kill();
+}
+
+function addScore(amount)
+{
+  score += amount;
+  scoreText.setText('Score: ' + score);
+}
+
+
+
+</script>
+
+</body>
+</html>
