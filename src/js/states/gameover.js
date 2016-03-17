@@ -29,7 +29,7 @@ export default class Gameover extends Phaser.State {
       }
     });
 
-    this.playAgain.onInputDown.add(()=>{
+    this.playAgain.onInputUp.add(()=>{
       this.state.start('Play');
     });
 
