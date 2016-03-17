@@ -3,12 +3,13 @@ import TextButton from '../extensions/textbutton';
 export default class Gameover extends Phaser.State {
 
   create() {
-
+    console.log('gameover state entered');
     this.gameOverText = new Phaser.Text(this.game, this.game.world.centerX, this.game.world.centerY, 'Game Over!', {
       font: '32px Medula One',
-      fill: 'black',
+      fill: 'white',
       align: 'center'
     });
+    this.gameOverText.anchor.setTo(0.5, 0.5);
 
     this.start = new TextButton({
       game: this.game,
@@ -30,6 +31,10 @@ export default class Gameover extends Phaser.State {
     this.start.onInputDown.add(()=>{
       this.state.start('Play');
     });
+
+    this.gameOverUI = this.add.group();
+    this.gameOverUI.add(this.gameOverText);
+    this.gameOverUI.add(this.start);
 
   }
 }

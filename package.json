@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Avalance-type game made with Phaser",
   "private": true,
-  "repository": "shantred/phaser-starfall-es6",
+  "repository": "Shantred/phaser-starfall-es6",
   "author": "Eric South",
   "license": "WTFPL",
   "scripts": {

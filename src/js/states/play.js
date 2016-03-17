@@ -62,12 +62,13 @@ export default class Play extends Phaser.State {
   update() {
 
     this.starTimer += this.game.time.elapsed;
-    this.currentLevelTimer += this.game.elapsed;
+    this.currentLevelTimer += this.game.time.elapsed;
 
     // Increase current level
     if( this.currentLevelTimer > this.starNextLevelDelay ) {
       this.currentLevelTimer = 0;
       this.starLevel++;
+      console.log("Star level increased!");
     }
 
     // Spawn star if it's time
@@ -81,7 +82,6 @@ export default class Play extends Phaser.State {
 
     if( this.starTimer >= startTimeToSpawn ) {
 
-      console.log('adding a new star');
       // Spawn a new star randomly on the Y axis and just above the viewport
       var star = new Star({
         game: this.game,
@@ -115,7 +115,6 @@ export default class Play extends Phaser.State {
   }
 
   gameOver() {
-    console.log('gameover');
     this.game.state.start('Gameover');
   }
 }

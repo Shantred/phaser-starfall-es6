@@ -2,15 +2,15 @@ export default class Preload extends Phaser.State {
 
     preload() {
 
+        // External Scripts
+        this.game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+        
         this.loaderBg = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'loaderBg');
         this.loaderBar = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'loaderBar');
         this.loaderBg.anchor.setTo(0.5);
         this.loaderBar.anchor.setTo(0.5);
 
         this.load.setPreloadSprite(this.loaderBar);
-
-        // External Scripts
-        this.game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 
         // Static Images
         this.game.load.image('sky', 'img/day.png');

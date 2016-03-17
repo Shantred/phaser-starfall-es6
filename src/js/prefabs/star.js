@@ -15,8 +15,4 @@ export default class Star extends Phaser.Sprite {
   damage(amount) {
     super.damage(amount);
   }
-
-  update() {
-    console.log("updating star!");
-  }
 }
