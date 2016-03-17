@@ -86,9 +86,13 @@ export default class Play extends Phaser.State {
       var star = new Star({
         game: this.game,
         x: this.game.rnd.integerInRange(1, this.game.world.width-22),
-        y: -22,
+        y: 1,
         asset: 'star',
         health: 1
+      });
+
+      star.events.onKilled.add(() => {
+        this.increaseScore(10);
       });
 
       this.stars.add(star);
@@ -116,5 +120,9 @@ export default class Play extends Phaser.State {
 
   gameOver() {
     this.game.state.start('Gameover');
+  }
+
+  increaseScore(amount) {
+    this.hud.addScore(amount);
   }
 }
