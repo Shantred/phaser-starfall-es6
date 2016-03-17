@@ -9,19 +9,19 @@ export default class Gameover extends Phaser.State {
     // Add Some things to make this more like the level
 
     // HUD
-    this.hud = new HUD({
-      game: this.game
-    });
+    // this.hud = new HUD({
+    //   game: this.game
+    // });
 
-    // Create floor
-    this.floor = new Floor({
-      game: this.game,
-      x: 0,
-      y: this.game.world.height - 32,
-      width: 400,
-      height: 32,
-      asset: 'new_ground'
-    });
+    // // Create floor
+    // this.floor = new Floor({
+    //   game: this.game,
+    //   x: 0,
+    //   y: this.game.world.height - 32,
+    //   width: 400,
+    //   height: 32,
+    //   asset: 'new_ground'
+    // });
 
     this.gameOverText = new Phaser.Text(this.game, this.game.world.centerX, this.game.world.centerY, 'Game Over!', {
       font: '32px Medula One',
@@ -53,7 +53,7 @@ export default class Gameover extends Phaser.State {
     });
 
     this.gameOverUI = this.add.group();
-    this.gameOverUI.add(this.floor);
+    //this.gameOverUI.add(this.floor);
     this.gameOverUI.add(this.gameOverText);
     this.gameOverUI.add(this.playAgain);
 

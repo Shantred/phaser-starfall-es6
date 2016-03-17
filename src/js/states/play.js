@@ -13,6 +13,7 @@ export default class Play extends Phaser.State {
     this.hud = new HUD({
       game: this.game
     });
+    this.score = 0;
 
     this.platforms = this.add.group();
 
@@ -29,7 +30,9 @@ export default class Play extends Phaser.State {
     this.platforms.add(this.floor);
 
     // Add player to world
-    this.player = new Player({
+    this.player = this.add.group();
+
+    var player = new Player({
       game: this.game,
       x: this.game.world.width/2 - 32,
       y: this.game.world.height - 150,
@@ -37,7 +40,7 @@ export default class Play extends Phaser.State {
       health: 10
     });
 
-    this.game.stage.addChild(this.player);
+    this.player.add(player);
 
     // Create groups to hold our spawnable units
     this.stars = this.add.group();
@@ -113,16 +116,20 @@ export default class Play extends Phaser.State {
     player.damage(10);
     star.damage(10);
 
-    if(!player.alive) {
+    // When the player "dies", pause all physics and switch to gameover state
+    if(!player.health <= 0) {
+
       this.gameOver();
     }
   }
 
   gameOver() {
-    this.game.state.start('Gameover');
+    this.game.physics.arcade.isPaused = true;
+    this.state.start('Gameover', false, false);
   }
 
   increaseScore(amount) {
     this.hud.addScore(amount);
+    this.score += amount;
   }
 }

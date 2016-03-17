@@ -14,6 +14,7 @@ export default class Star extends Phaser.Sprite {
   }
 
   damage(amount) {
-    super.damage(amount);
+    //super.damage(amount);
+    this.health -= amount;
   }
 }

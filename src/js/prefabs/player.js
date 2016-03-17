@@ -1,7 +1,7 @@
 export default class Player extends Phaser.Sprite {
 
   constructor({ game, x, y, asset, health }) {
-    super(game, x, y, asset, health);
+    super(game, x, y, asset);
 
     this.game = game;
     this.health = health;
@@ -38,6 +38,6 @@ export default class Player extends Phaser.Sprite {
   }
 
   damage(amount) {
-    super.damage(amount);
+    this.health -= amount;
   }
 }
