@@ -39,7 +39,7 @@ export default class Play extends Phaser.State {
       x: this.game.world.width/2 - 32,
       y: this.game.world.height - 150,
       asset: 'dude',
-      health: 10
+      health: 500
     });
 
     this.player.add(player);
@@ -107,10 +107,14 @@ export default class Play extends Phaser.State {
             frame: 0
           });
 
+          // diamond.events.onKilled.add(() => {
+          //   diamond.resetDecay();
+          // });
+
           this.diamonds.add(diamond);
           diamond.body.gravity.y = this.maxXGravity;
         } else {
-          console.log("using existing diamond");
+          console.log("using existing diamond ", diamond);
           diamond.reset(this.game.rnd.integerInRange(1, this.game.world.width-22), 1);
         }
       } else {
@@ -119,7 +123,6 @@ export default class Play extends Phaser.State {
         let star = this.stars.getFirstExists(false);
 
         if( !star ) {
-          console.log("creating new star");
           star = new Star({
             game: this.game,
             x: this.game.rnd.integerInRange(1, this.game.world.width-22),
@@ -135,7 +138,6 @@ export default class Play extends Phaser.State {
           this.stars.add(star);
           star.body.gravity.y = this.game.rnd.integerInRange(600, 800);
         } else {
-          console.log("using existing star");
           star.reset(this.game.rnd.integerInRange(1, this.game.world.width-22), 1);
         }
       }
@@ -174,18 +176,16 @@ export default class Play extends Phaser.State {
   // Collectables decay over a period of 3 seconds. They remain on the ground
   // for 2 seconds and blink for 1 before being removed
   collectableDecay(collectable) {
-    collectable.decayTimer = this.game.time.events.add(Phaser.Timer.SECOND * 2, collectable.flash, collectable);
+
+    collectable.decay();
+    
   }
 
   collectItem(collectable) {
     this.hud.addScore(100);
     this.score += 100;
 
-    if( collectable.animations.getAnimation('flash').isPlaying ) {
-      collectable.animations.stop();
-    }
-
-    collectable.exists = false;
+    collectable.collect();
 
   }
 }

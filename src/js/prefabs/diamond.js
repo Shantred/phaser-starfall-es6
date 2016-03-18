@@ -15,29 +15,48 @@ export default class Diamond extends Phaser.Sprite {
     
   }
 
-  flash() {
+  reset(x, y) {
+    this.resetDecay();
+    super.reset(x, y);
+  }
 
+  flash() {
+    console.log('flash called');
     // Make sure flash animation is not already playing for some reason
     if( !this.animations.getAnimation('flash').isPlaying ) {
     	this.animations.getAnimation('flash').play(15, false, true);
     }
   }
 
-  // In addition to the parent reset, set frame to 0
-  // and end prevent flash
-  reset(x, y) {
+  // When decay needs resetting, we need to stop any animation that's playing and set the active frame to 0
+  // and destroy the decay timer if it is present.
+  resetDecay() {
+    console.log('resetDecay called');
+    if( this.animations.getAnimation('flash').isPlaying ) {
+      this.animations.stop();
+      this.frame = 0;
+    }
 
-  	if( !this.animations.getAnimation('flash').isPlaying ) {
-  		this.animations.stop();
-  	}
+    if( this.decayTimer !== null ) {
+      console.log('attempting to clear timer', this.decayTimer);
+      this.game.time.events.destroy( this.decayTimer );
+      this.decayTimer = null;
+    }
+  }
 
-  	this.frame = 0;
+  collect() {
+    this.resetDecay();
+    this.exists = false;
+  }
 
-  	if( this.decayTimer !== null ) {
-  		this.decayTimer.destroy();
-  		this.decayTimer = null;
-  	}
+  // Begin decay if not already in progress
+  decay() {
 
-  	super.reset(x, y);
+    if( this.decayTimer === null ) {
+      console.log("initializing decay timer");
+      this.decayTimer = this.game.time.create(true);
+      this.decayTimer.add(2000, this.flash, this);
+      this.decayTimer.start();
+    }
   }
 }
