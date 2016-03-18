@@ -7,6 +7,8 @@ import Floor from '../prefabs/floor';
 export default class Play extends Phaser.State {
 
   create() {
+    this.bg = this.game.add.image(0, 0, 'sky');
+
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
     // HUD
@@ -60,6 +62,10 @@ export default class Play extends Phaser.State {
 
     this.starTimer = 0; // Time since last star spawn
     this.currentLevelTimer = 0; // Time since last level increase
+    
+    // Make sure hud is always on top
+    this.game.world.bringToTop(this.hud);
+
   }
 
   update() {
@@ -85,30 +91,63 @@ export default class Play extends Phaser.State {
 
     if( this.starTimer >= startTimeToSpawn ) {
 
-      // Spawn a new star randomly on the Y axis and just above the viewport
-      var star = new Star({
-        game: this.game,
-        x: this.game.rnd.integerInRange(1, this.game.world.width-22),
-        y: 1,
-        asset: 'star',
-        health: 1
-      });
+      // For every time a star spawns, there should be a chance to spawn a collectable diamond instead
+      let diamondChance = this.game.rnd.integerInRange(1, 20);
 
-      star.events.onKilled.add(() => {
-        this.increaseScore(10);
-      });
+      if( diamondChance === 1 ) {
+        let diamond = this.diamonds.getFirstExists(false);
 
-      this.stars.add(star);
-      star.body.gravity.y = this.game.rnd.integerInRange(600, 800);
+        if( !diamond ) {
+          console.log("creating new diamond");
+          diamond = new Diamond({
+            game: this.game,
+            x: this.game.rnd.integerInRange(1, this.game.world.width-22),
+            y: 1,
+            asset: 'diamond',
+            frame: 0
+          });
+
+          this.diamonds.add(diamond);
+          diamond.body.gravity.y = this.maxXGravity;
+        } else {
+          console.log("using existing diamond");
+          diamond.reset(this.game.rnd.integerInRange(1, this.game.world.width-22), 1);
+        }
+      } else {
+
+        // Spawn a new star randomly on the Y axis and just above the viewport
+        let star = this.stars.getFirstExists(false);
+
+        if( !star ) {
+          console.log("creating new star");
+          star = new Star({
+            game: this.game,
+            x: this.game.rnd.integerInRange(1, this.game.world.width-22),
+            y: 1,
+            asset: 'star',
+            health: 1
+          });
+
+          star.events.onKilled.add(() => {
+            this.increaseScore(10);
+          });
+
+          this.stars.add(star);
+          star.body.gravity.y = this.game.rnd.integerInRange(600, 800);
+        } else {
+          console.log("using existing star");
+          star.reset(this.game.rnd.integerInRange(1, this.game.world.width-22), 1);
+        }
+      }
 
       this.starTimer = 0;
     }
 
     // Collisions
     this.game.physics.arcade.collide(this.player, this.platforms);
-    // TODO: DIAMOND COLLISION
+    this.game.physics.arcade.collide(this.diamonds, this.platforms, this.collectableDecay, null, this)
     this.game.physics.arcade.overlap(this.player, this.stars, this.starCollision, null, this);
-    // TODO: DIAMOND COLLECTIONs
+    this.game.physics.arcade.overlap(this.diamonds, this.player, this.collectItem, null, this);
   }
 
   // Player collision with a star does 10 damage
@@ -117,8 +156,7 @@ export default class Play extends Phaser.State {
     star.damage(10);
 
     // When the player "dies", pause all physics and switch to gameover state
-    if(!player.health <= 0) {
-
+    if(player.health <= 0) {
       this.gameOver();
     }
   }
@@ -131,5 +169,23 @@ export default class Play extends Phaser.State {
   increaseScore(amount) {
     this.hud.addScore(amount);
     this.score += amount;
+  }
+
+  // Collectables decay over a period of 3 seconds. They remain on the ground
+  // for 2 seconds and blink for 1 before being removed
+  collectableDecay(collectable) {
+    collectable.decayTimer = this.game.time.events.add(Phaser.Timer.SECOND * 2, collectable.flash, collectable);
+  }
+
+  collectItem(collectable) {
+    this.hud.addScore(100);
+    this.score += 100;
+
+    if( collectable.animations.getAnimation('flash').isPlaying ) {
+      collectable.animations.stop();
+    }
+
+    collectable.exists = false;
+
   }
 }
