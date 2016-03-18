@@ -98,6 +98,7 @@ export default class Play extends Phaser.State {
         let diamond = this.diamonds.getFirstExists(false);
 
         if( !diamond ) {
+          console.log("creating new diamond");
           diamond = new Diamond({
             game: this.game,
             x: this.game.rnd.integerInRange(1, this.game.world.width-22),
@@ -109,6 +110,7 @@ export default class Play extends Phaser.State {
           this.diamonds.add(diamond);
           diamond.body.gravity.y = this.maxXGravity;
         } else {
+          console.log("using existing diamond");
           diamond.reset(this.game.rnd.integerInRange(1, this.game.world.width-22), 1);
         }
       } else {
@@ -117,6 +119,7 @@ export default class Play extends Phaser.State {
         let star = this.stars.getFirstExists(false);
 
         if( !star ) {
+          console.log("creating new star");
           star = new Star({
             game: this.game,
             x: this.game.rnd.integerInRange(1, this.game.world.width-22),
@@ -132,6 +135,7 @@ export default class Play extends Phaser.State {
           this.stars.add(star);
           star.body.gravity.y = this.game.rnd.integerInRange(600, 800);
         } else {
+          console.log("using existing star");
           star.reset(this.game.rnd.integerInRange(1, this.game.world.width-22), 1);
         }
       }
@@ -170,7 +174,7 @@ export default class Play extends Phaser.State {
   // Collectables decay over a period of 3 seconds. They remain on the ground
   // for 2 seconds and blink for 1 before being removed
   collectableDecay(collectable) {
-    this.game.time.events.add(Phaser.Timer.SECOND * 2, collectable.flash, collectable);
+    collectable.decayTimer = this.game.time.events.add(Phaser.Timer.SECOND * 2, collectable.flash, collectable);
   }
 
   collectItem(collectable) {
