@@ -5,10 +5,18 @@ export default class Diamond extends Phaser.Sprite {
 
     this.game = game;
 
-    this.body.gravity.y = 600;
+    this.anchor.setTo(0.5, 0.5);
     this.scale.set(0.8);
 
-    this.animations.add('blink', [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 15, false);
+    this.animations.add('flash', [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 15, false);
     
+  }
+
+  flash() {
+  	
+    // Make sure flash animation is not already playing for some reason
+    if( !this.animations.getAnimation('flash').isPlaying ) {
+    	this.animations.getAnimation('flash').play(15, false, true);
+    }
   }
 }

@@ -4,14 +4,6 @@ export default class Hud extends Phaser.Group {
     super(game);
     this.game = game;
 
-    // Create level, this probably later needs to be separated into it's own object
-    this.bg = new Phaser.Image(this.game, 0, 0, 'sky');
-
-    // this.floor = new Phaser.TileSprite(this.game, 0, this.game.world.height - 32, 400, 32, 'new_ground');
-    // this.game.physics.arcade.enable(this.floor);
-    // this.floor.body.allowGravity = false;
-    // this.floor.immovable = true;
-
     // Score
     this.score = 0;
     this.scoreLabel = 'Score: ';
@@ -22,8 +14,6 @@ export default class Hud extends Phaser.Group {
     });
     this.scoreText.setShadow(1,1,'#000',1);
 
-    this.add(this.bg);
-    //this.add(this.floor);
     this.add(this.scoreText);
 
   }
