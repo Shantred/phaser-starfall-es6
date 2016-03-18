@@ -77,7 +77,6 @@ export default class Play extends Phaser.State {
     if( this.currentLevelTimer > this.starNextLevelDelay ) {
       this.currentLevelTimer = 0;
       this.starLevel++;
-      console.log("Star level increased!");
     }
 
     // Spawn star if it's time
@@ -176,9 +175,7 @@ export default class Play extends Phaser.State {
   // Collectables decay over a period of 3 seconds. They remain on the ground
   // for 2 seconds and blink for 1 before being removed
   collectableDecay(collectable) {
-
     collectable.decay();
-    
   }
 
   collectItem(collectable) {

@@ -21,7 +21,6 @@ export default class Diamond extends Phaser.Sprite {
   }
 
   flash() {
-    console.log('flash called');
     // Make sure flash animation is not already playing for some reason
     if( !this.animations.getAnimation('flash').isPlaying ) {
     	this.animations.getAnimation('flash').play(15, false, true);
