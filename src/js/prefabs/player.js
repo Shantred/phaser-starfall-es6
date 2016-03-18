@@ -5,6 +5,7 @@ export default class Player extends Phaser.Sprite {
 
     this.game = game;
     this.health = health;
+    this.hasControl = true;
 
     // Enable physics and set physics properties of player
     this.game.physics.arcade.enable(this);
@@ -24,16 +25,19 @@ export default class Player extends Phaser.Sprite {
     // Always kill horizontal movement without accel/decel
     this.body.velocity.x = 0;
 
-    if( this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) ) {
-      this.body.velocity.x = -275;
-      this.animations.play('left');
-    } else if( this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) ) {
-      this.body.velocity.x = 275;
-      this.animations.play('right');
-    } else {
-      this.animations.stop();
-      this.frame = 4;
+    if( this.hasControl ) {
+      if( this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) ) {
+        this.body.velocity.x = -275;
+        this.animations.play('left');
+      } else if( this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) ) {
+        this.body.velocity.x = 275;
+        this.animations.play('right');
+      } else {
+        this.animations.stop();
+        this.frame = 4;
+      }
     }
+    
 
   }
 
