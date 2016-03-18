@@ -25,6 +25,12 @@ export default class Player extends Phaser.Sprite {
     // Always kill horizontal movement without accel/decel
     this.body.velocity.x = 0;
 
+    // If player has 0 health, stop animations and disable controls
+    if( this.health <= 0 ) {
+      this.hasControl = false;
+      this.animations.stop();
+    }
+
     if( this.hasControl ) {
       if( this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) ) {
         this.body.velocity.x = -275;

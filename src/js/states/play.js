@@ -153,7 +153,6 @@ export default class Play extends Phaser.State {
 
     // When the player "dies", pause all physics and switch to gameover state
     if(player.health <= 0) {
-      player.hasControl = false;
       this.gameOver();
     }
   }
