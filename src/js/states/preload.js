@@ -14,14 +14,15 @@ export default class Preload extends Phaser.State {
 
         // Static Images
         this.game.load.image('sky', 'img/day.png');
-        this.game.load.image('new_ground', 'img/Basic_Ground_Top_Pixel.png');
         this.game.load.image('star', 'img/star.png');
 
         // Sprites
         this.game.load.spritesheet('diamond', 'img/diamond.png', 32, 28);
         this.game.load.spritesheet('dude', 'img/dude.png', 32, 48);
+        this.game.load.spritesheet('ground_sheet', 'img/spritesheet/ground_sheet.png', 260, 124);
 
         this.load.atlasJSONArray('ui', 'img/spritesheet/ui.png', 'data/spritesheet/ui.json');
+        //this.load.atlasJSONArray('ground_sheet', 'img/spritesheet/ground_sheet.png', 'data/spritesheet/ground_sheet.json');
 
     }
 

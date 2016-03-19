@@ -23,12 +23,11 @@ export default class Play extends Phaser.State {
     this.floor = new Floor({
       game: this.game,
       x: 0,
-      y: this.game.world.height - 32,
-      width: 400,
-      height: 32,
-      asset: 'new_ground'
+      y: this.game.world.height - 43,
+      width: 800,
+      height: 124,
+      asset: 'ground_sheet'
     });
-
     this.platforms.add(this.floor);
 
     // Add player to world
@@ -37,7 +36,7 @@ export default class Play extends Phaser.State {
     var player = new Player({
       game: this.game,
       x: this.game.world.width/2 - 32,
-      y: this.game.world.height - 80,
+      y: this.game.world.height - 90,
       asset: 'dude',
       health: 10
     });
