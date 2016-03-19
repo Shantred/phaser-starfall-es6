@@ -37,7 +37,7 @@ export default class Play extends Phaser.State {
     var player = new Player({
       game: this.game,
       x: this.game.world.width/2 - 32,
-      y: this.game.world.height - 150,
+      y: this.game.world.height - 80,
       asset: 'dude',
       health: 10
     });
