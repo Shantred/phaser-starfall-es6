@@ -31,7 +31,6 @@ export default class Hud extends Phaser.Group {
 
     // Elapsed Time
     this.startTime = this.game.time.now;
-    console.log('current time: ' + this.startTime);
     this.minutes = 0;
     this.seconds = 0;
     this.timerText = new Phaser.Text(this.game, this.game.world.centerX-30, 16, '00:00', {
