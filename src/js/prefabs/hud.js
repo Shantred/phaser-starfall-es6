@@ -17,10 +17,10 @@ export default class Hud extends Phaser.Group {
     // Diamond Counter
     this.diamondScore = 0;
     this.diamondsLabel = 'x ';
-    this.diamondSprite = new Phaser.Sprite(this.game, this.game.world.width - 92, 16, 'diamond');
+    this.diamondSprite = new Phaser.Sprite(this.game, this.game.world.width - 87, 16, 'diamond');
     this.diamondSprite.frame = 0;
     this.diamondSprite.scale.setTo(0.8, 0.8);
-    this.diamondText = new Phaser.Text(this.game, this.game.world.width - 64, 16, this.diamondsLabel + this.diamondScore, {
+    this.diamondText = new Phaser.Text(this.game, this.game.world.width - 59, 16, this.diamondsLabel + this.diamondScore, {
       font: '18pt Passion One',
       fill: 'white',
       align: 'center'
