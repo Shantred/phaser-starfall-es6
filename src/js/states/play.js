@@ -100,7 +100,7 @@ export default class Play extends Phaser.State {
           console.log("creating new diamond");
           diamond = new Diamond({
             game: this.game,
-            x: this.game.rnd.integerInRange(1, this.game.world.width-22),
+            x: this.game.rnd.integerInRange(10, this.game.world.width-22),
             y: 1,
             asset: 'diamond',
             frame: 0
@@ -124,7 +124,7 @@ export default class Play extends Phaser.State {
         if( !star ) {
           star = new Star({
             game: this.game,
-            x: this.game.rnd.integerInRange(1, this.game.world.width-22),
+            x: this.game.rnd.integerInRange(10, this.game.world.width-22),
             y: 1,
             asset: 'star',
             health: 1
@@ -164,6 +164,7 @@ export default class Play extends Phaser.State {
 
   gameOver() {
     this.game.physics.arcade.isPaused = true;
+    this.hud.timerPaused = true;
     this.state.start('Gameover', false, false);
   }
 
