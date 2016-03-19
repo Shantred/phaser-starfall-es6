@@ -20,10 +20,8 @@ export default class Preload extends Phaser.State {
         // Sprites
         this.game.load.spritesheet('diamond', 'img/diamond.png', 32, 28);
         this.game.load.spritesheet('dude', 'img/dude.png', 32, 48);
-        this.game.load.spritesheet('restart', 'img/blue_button.png', 200, 48);
 
-        this.load.atlasJSONArray('button', 'img/spritesheet/button.png', 'data/spritesheet/button.json');
-        this.load.atlasJSONArray('button_new', 'img/spritesheet/button_new.png', 'data/spritesheet/button_new.json');
+        this.load.atlasJSONArray('ui', 'img/spritesheet/ui.png', 'data/spritesheet/ui.json');
 
     }
 

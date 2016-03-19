@@ -8,7 +8,7 @@ export default class Hud extends Phaser.Group {
     this.score = 0;
     this.scoreLabel = 'Score: ';
     this.scoreText = new Phaser.Text(this.game, 16, 16, this.scoreLabel + this.score, {
-      font: '32px Medula One',
+      font: '18pt Passion One',
       fill: 'white',
       align: 'center'
     });

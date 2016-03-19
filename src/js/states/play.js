@@ -39,7 +39,7 @@ export default class Play extends Phaser.State {
       x: this.game.world.width/2 - 32,
       y: this.game.world.height - 150,
       asset: 'dude',
-      health: 500
+      health: 10
     });
 
     this.player.add(player);
