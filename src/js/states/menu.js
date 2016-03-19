@@ -4,7 +4,7 @@ export default class Menu extends Phaser.State {
 
     this.bg = this.game.add.image(0, 0, 'sky');
 
-    this.playButton = new Phaser.Button(this.game, this.game.world.centerX, this.game.world.centerY + 55, 'ui', false, false, 6, 6, 5, 6);
+    this.playButton = new Phaser.Button(this.game, this.game.world.centerX, this.game.world.centerY + 35, 'ui', false, false, 6, 6, 5, 6);
     this.playButton.anchor.setTo(0.5, 0.5);
     this.playButton.scale.setTo( 0.5, 0.5);
 
@@ -12,13 +12,13 @@ export default class Menu extends Phaser.State {
       this.state.start('Play');
     });
 
-    this.title = new Phaser.Text(this.game, this.game.world.centerX, this.game.world.centerY-25, 'Phaser \nStarfall', {
+    this.title = new Phaser.Text(this.game, this.game.world.centerX, this.game.world.centerY-75, 'Phaser \nStarfall', {
       font: '28pt Paytone One',
       fill: 'white',
       align: 'center'
     });
     this.title.anchor.setTo(0.5, 0.5);
-    this.title.setShadow(1,1,'#000',1);
+    this.title.setShadow(2,2,'#000',0);
 
     this.menuUI = this.add.group();
     this.menuUI.add(this.playButton);

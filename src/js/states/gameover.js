@@ -8,7 +8,7 @@ export default class Gameover extends Phaser.State {
       align: 'center'
     });
     this.gameOverText.anchor.setTo(0.5, 0.5);
-    this.gameOverText.setShadow(1,1,'#000',1);
+    this.gameOverText.setShadow(2,2,'#000',0);
 
     // Restart buttons are frame 7 and 8 of the 'ui' texture atlas
     this.restart = new Phaser.Button(this.game, this.game.world.centerX, this.game.world.centerY + 55, 'ui', false, false, 8, 8, 7, 8);

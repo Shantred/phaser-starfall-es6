@@ -12,7 +12,7 @@ export default class Hud extends Phaser.Group {
       fill: 'white',
       align: 'center'
     });
-    this.scoreText.setShadow(1,1,'#000',1);
+    this.scoreText.setShadow(2,2,'#000',0);
 
     // Diamond Counter
     this.diamondScore = 0;
@@ -25,7 +25,7 @@ export default class Hud extends Phaser.Group {
       fill: 'white',
       align: 'center'
     });
-    this.diamondText.setShadow(1,1,'#000',1);
+    this.diamondText.setShadow(2,2,'#000',0);
 
     this.add(this.scoreText);
     this.add(this.diamondSprite);
