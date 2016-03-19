@@ -180,6 +180,7 @@ export default class Play extends Phaser.State {
 
   collectItem(collectable) {
     this.hud.addScore(100);
+    this.hud.addCollectable(1);
     this.score += 100;
 
     collectable.collect();
