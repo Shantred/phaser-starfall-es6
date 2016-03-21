@@ -15,7 +15,7 @@ export default class Play extends Phaser.State {
     this.hud = new HUD({
       game: this.game
     });
-    this.score = 0;
+    //this.score = 0;
 
     this.platforms = this.add.group();
 
@@ -84,6 +84,7 @@ export default class Play extends Phaser.State {
 
     // Make sure we do not spawn faster than the fastest delay setting
     if( startTimeToSpawn < this.minStarDelay ) {
+      console.log("We are above max level");
       startTimeToSpawn = this.minStarDelay;
     }
 
@@ -129,9 +130,9 @@ export default class Play extends Phaser.State {
             health: 1
           });
 
-          star.events.onKilled.add(() => {
-            this.increaseScore(10);
-          });
+          // star.events.onKilled.add(() => {
+          //   this.increaseScore(10);
+          // });
 
           this.stars.add(star);
           star.body.gravity.y = this.game.rnd.integerInRange(600, 800);
@@ -167,10 +168,10 @@ export default class Play extends Phaser.State {
     this.state.start('Gameover', false, false);
   }
 
-  increaseScore(amount) {
-    this.hud.addScore(amount);
-    this.score += amount;
-  }
+  // increaseScore(amount) {
+  //   this.hud.addScore(amount);
+  //   this.score += amount;
+  // }
 
   // Collectables decay over a period of 3 seconds. They remain on the ground
   // for 2 seconds and blink for 1 before being removed
@@ -179,9 +180,9 @@ export default class Play extends Phaser.State {
   }
 
   collectItem(collectable) {
-    this.hud.addScore(100);
+    //this.hud.addScore(100);
     this.hud.addCollectable(1);
-    this.score += 100;
+    //this.score += 100;
 
     collectable.collect();
 
