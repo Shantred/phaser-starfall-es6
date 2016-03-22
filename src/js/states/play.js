@@ -7,6 +7,8 @@ import Floor from '../prefabs/floor';
 export default class Play extends Phaser.State {
 
   create() {
+
+    this.game.time.advancedTiming = true;
     this.bg = this.game.add.image(0, 0, 'sky');
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -50,6 +52,34 @@ export default class Play extends Phaser.State {
     this.diamonds = this.add.group();
     this.diamonds.enableBody = true;
 
+    // Go ahead and pool 30 stars
+    for( let i = 0; i < 30; i++ ) {
+      var star = new Star({
+          game: this.game,
+          x: this.game.rnd.integerInRange(10, this.game.world.width-22),
+          y: 1,
+          asset: 'star',
+          health: 1
+        });
+
+      this.stars.add(star);
+      star.exists = false;
+    }
+
+    // Pool 10 diamonds
+    for( let i = 0; i < 10; i++ ) {
+      var diamond = new Diamond({
+          game: this.game,
+          x: this.game.rnd.integerInRange(10, this.game.world.width-22),
+          y: 1,
+          asset: 'diamond',
+          frame: 0
+        });
+
+        this.diamonds.add(diamond);
+        diamond.exists = false;
+    }
+
     // Game Settings
     this.minXGravity = 800;
     this.maxXGravity = 600;
@@ -80,6 +110,10 @@ export default class Play extends Phaser.State {
     this.game.physics.arcade.overlap(this.diamonds, this.player, this.collectItem, null, this);
   }
 
+  // render() {
+  //   this.game.debug.text(this.game.time.fps || '--', 2, 14, '#00ff00');
+  // }
+
   spawnStar() {
 
     this.starLevel++;
@@ -105,6 +139,7 @@ export default class Play extends Phaser.State {
       } else {
         console.log("Using existing diamond", diamond);
         diamond.reset(this.game.rnd.integerInRange(1, this.game.world.width-22), 1);
+        diamond.body.gravity.y = this.maxXGravity;
       }
     } else {
 
@@ -112,6 +147,7 @@ export default class Play extends Phaser.State {
       let star = this.stars.getFirstExists(false);
 
       if( !star ) {
+        console.log("Using new star");
         star = new Star({
           game: this.game,
           x: this.game.rnd.integerInRange(10, this.game.world.width-22),
@@ -123,7 +159,9 @@ export default class Play extends Phaser.State {
         this.stars.add(star);
         star.body.gravity.y = this.game.rnd.integerInRange(600, 800);
       } else {
+        console.log("Using existing star");
         star.reset(this.game.rnd.integerInRange(1, this.game.world.width-22), 1);
+        star.body.gravity.y = 800;
       }
     }
 
