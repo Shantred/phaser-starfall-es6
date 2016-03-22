@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Phaser Starfall ES6</title>
+</head>
+<body>
+    <!--build:lib(./) js/phaser.js-->
+    <script src="bower_components/phaser/build/phaser.js"></script>
+    <!-- endbuild -->
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+
+    </style>
+    <script text="text/javascript">
+
+WebFontConfig = {
+    //active: function() { game.time.events.add(Phaser.Timer.SECOND, createText, this); },
+    //  The Google Fonts we want to load (specify as many as you like in the array)
+    google: {
+      families: ['Paytone One', 'Passion One' ]
+    }
+};
+    </script>
+    <!--build:js js/game.js-->
+    <script src="js/game.js"></script>
+    <!-- endbuild -->
+</body>
+</html>
