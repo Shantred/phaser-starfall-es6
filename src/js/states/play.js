@@ -128,8 +128,12 @@ export default class Play extends Phaser.State {
     }
 
     // The old timer should already be over and destroyed. Create a new one
+    // Limit the lowest time to this.minStarDelay
+    var delay = this.starSpawnDelay - ( this.starLevel * 3 );
+    if( delay < this.minStarDelay )
+        delay = this.minStarDelay;
     this.starTimer = this.game.time.create(true);
-    this.starTimer.add((500 - (this.starLevel * 3)), this.spawnStar, this);
+    this.starTimer.add(delay, this.spawnStar, this);
     this.starTimer.start();
   }
 
