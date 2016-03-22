@@ -15,7 +15,7 @@ export default class Play extends Phaser.State {
     this.hud = new HUD({
       game: this.game
     });
-    this.score = 0;
+    //this.score = 0;
 
     this.platforms = this.add.group();
 
@@ -54,13 +54,17 @@ export default class Play extends Phaser.State {
     this.minXGravity = 800;
     this.maxXGravity = 600;
 
+    // Stars should begin by spawning every 500ms. Our target for difficulty is for the game to start off fairly easy,
+    // but plateau in difficulty after 40 seconds. We achieve this by decreasing the star spawn timer by 3ms every time
+    // we spawn a star in until we hit 100ms. 
+
     this.starLevel = 0; // Used to determine time between star spawns. Higher level = faster spawn time on new games
     this.starSpawnDelay = 500; // Delay between star spawns at beginning of the game
-    this.starNextLevelDelay = 3000; // How often starLevel is incremented
     this.minStarDelay = 100; // The lowest (in time) delay between star spawns
 
-    this.starTimer = 0; // Time since last star spawn
-    this.currentLevelTimer = 0; // Time since last level increase
+    this.starTimer = this.game.time.create(true);
+    this.starTimer.add(500, this.spawnStar, this);
+    this.starTimer.start();
     
     // Make sure hud is always on top
     this.game.world.bringToTop(this.hud);
@@ -69,85 +73,68 @@ export default class Play extends Phaser.State {
 
   update() {
 
-    this.starTimer += this.game.time.elapsed;
-    this.currentLevelTimer += this.game.time.elapsed;
-
-    // Increase current level
-    if( this.currentLevelTimer > this.starNextLevelDelay ) {
-      this.currentLevelTimer = 0;
-      this.starLevel++;
-    }
-
-    // Spawn star if it's time
-    // Stars start by spawning every starSpawnDelay ms and spawn 20ms faster for every star level
-    var startTimeToSpawn = this.starSpawnDelay - (this.starLevel * 20);
-
-    // Make sure we do not spawn faster than the fastest delay setting
-    if( startTimeToSpawn < this.minStarDelay ) {
-      startTimeToSpawn = this.minStarDelay;
-    }
-
-    if( this.starTimer >= startTimeToSpawn ) {
-
-      // For every time a star spawns, there should be a chance to spawn a collectable diamond instead
-      let diamondChance = this.game.rnd.integerInRange(1, 20);
-
-      if( diamondChance === 1 ) {
-        let diamond = this.diamonds.getFirstExists(false);
-
-        if( !diamond ) {
-          console.log("creating new diamond");
-          diamond = new Diamond({
-            game: this.game,
-            x: this.game.rnd.integerInRange(10, this.game.world.width-22),
-            y: 1,
-            asset: 'diamond',
-            frame: 0
-          });
-
-          // diamond.events.onKilled.add(() => {
-          //   diamond.resetDecay();
-          // });
-
-          this.diamonds.add(diamond);
-          diamond.body.gravity.y = this.maxXGravity;
-        } else {
-          console.log("using existing diamond ", diamond);
-          diamond.reset(this.game.rnd.integerInRange(1, this.game.world.width-22), 1);
-        }
-      } else {
-
-        // Spawn a new star randomly on the Y axis and just above the viewport
-        let star = this.stars.getFirstExists(false);
-
-        if( !star ) {
-          star = new Star({
-            game: this.game,
-            x: this.game.rnd.integerInRange(10, this.game.world.width-22),
-            y: 1,
-            asset: 'star',
-            health: 1
-          });
-
-          star.events.onKilled.add(() => {
-            this.increaseScore(10);
-          });
-
-          this.stars.add(star);
-          star.body.gravity.y = this.game.rnd.integerInRange(600, 800);
-        } else {
-          star.reset(this.game.rnd.integerInRange(1, this.game.world.width-22), 1);
-        }
-      }
-
-      this.starTimer = 0;
-    }
-
     // Collisions
     this.game.physics.arcade.collide(this.player, this.platforms);
     this.game.physics.arcade.collide(this.diamonds, this.platforms, this.collectableDecay, null, this)
     this.game.physics.arcade.overlap(this.player, this.stars, this.starCollision, null, this);
     this.game.physics.arcade.overlap(this.diamonds, this.player, this.collectItem, null, this);
+  }
+
+  spawnStar() {
+
+    this.starLevel++;
+
+    // Every time a star spawns, there is a chance for a diamond to spawn in it's place
+    let diamondChance = this.game.rnd.integerInRange(1, 15);
+
+    if( diamondChance === 1 ) {
+      let diamond = this.diamonds.getFirstExists(false);
+
+      if( !diamond ) {
+        console.log("Creating new diamond");
+        diamond = new Diamond({
+          game: this.game,
+          x: this.game.rnd.integerInRange(10, this.game.world.width-22),
+          y: 1,
+          asset: 'diamond',
+          frame: 0
+        });
+
+        this.diamonds.add(diamond);
+        diamond.body.gravity.y = this.maxXGravity;
+      } else {
+        console.log("Using existing diamond", diamond);
+        diamond.reset(this.game.rnd.integerInRange(1, this.game.world.width-22), 1);
+      }
+    } else {
+
+      // Spawn a star instead
+      let star = this.stars.getFirstExists(false);
+
+      if( !star ) {
+        star = new Star({
+          game: this.game,
+          x: this.game.rnd.integerInRange(10, this.game.world.width-22),
+          y: 1,
+          asset: 'star',
+          health: 1
+        });
+
+        this.stars.add(star);
+        star.body.gravity.y = this.game.rnd.integerInRange(600, 800);
+      } else {
+        star.reset(this.game.rnd.integerInRange(1, this.game.world.width-22), 1);
+      }
+    }
+
+    // The old timer should already be over and destroyed. Create a new one
+    // Limit the lowest time to this.minStarDelay
+    var delay = this.starSpawnDelay - ( this.starLevel * 3 );
+    if( delay < this.minStarDelay )
+        delay = this.minStarDelay;
+    this.starTimer = this.game.time.create(true);
+    this.starTimer.add(delay, this.spawnStar, this);
+    this.starTimer.start();
   }
 
   // Player collision with a star does 10 damage
@@ -167,10 +154,10 @@ export default class Play extends Phaser.State {
     this.state.start('Gameover', false, false);
   }
 
-  increaseScore(amount) {
-    this.hud.addScore(amount);
-    this.score += amount;
-  }
+  // increaseScore(amount) {
+  //   this.hud.addScore(amount);
+  //   this.score += amount;
+  // }
 
   // Collectables decay over a period of 3 seconds. They remain on the ground
   // for 2 seconds and blink for 1 before being removed
@@ -179,9 +166,9 @@ export default class Play extends Phaser.State {
   }
 
   collectItem(collectable) {
-    this.hud.addScore(100);
+    //this.hud.addScore(100);
     this.hud.addCollectable(1);
-    this.score += 100;
+    //this.score += 100;
 
     collectable.collect();
 

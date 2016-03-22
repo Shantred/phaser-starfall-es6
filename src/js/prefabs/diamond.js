@@ -18,6 +18,8 @@ export default class Diamond extends Phaser.Sprite {
   reset(x, y) {
     this.resetDecay();
     super.reset(x, y);
+    
+    
   }
 
   flash() {

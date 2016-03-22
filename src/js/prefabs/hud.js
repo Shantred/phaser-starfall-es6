@@ -7,14 +7,14 @@ export default class Hud extends Phaser.Group {
     this.timerPaused = false;
 
     // Score
-    this.score = 0;
-    this.scoreLabel = 'Score: ';
-    this.scoreText = new Phaser.Text(this.game, 16, 16, this.scoreLabel + this.score, {
-      font: '18pt Passion One',
-      fill: 'white',
-      align: 'center'
-    });
-    this.scoreText.setShadow(2,2,'#000',0);
+    // this.score = 0;
+    // this.scoreLabel = 'Score: ';
+    // this.scoreText = new Phaser.Text(this.game, 16, 16, this.scoreLabel + this.score, {
+    //   font: '18pt Passion One',
+    //   fill: 'white',
+    //   align: 'center'
+    // });
+    // this.scoreText.setShadow(2,2,'#000',0);
 
     // Diamond Counter
     this.diamondScore = 0;
@@ -40,7 +40,7 @@ export default class Hud extends Phaser.Group {
     });
     this.timerText.setShadow(2,2,'#000',0);
 
-    this.add(this.scoreText);
+    //this.add(this.scoreText);
     this.add(this.diamondSprite);
     this.add(this.diamondText);
     this.add(this.timerText);
@@ -67,10 +67,10 @@ export default class Hud extends Phaser.Group {
     }
   }
 
-  addScore(amount) {
-    this.score += amount;
-    this.scoreText.text = this.scoreLabel + this.score;
-  }
+  // addScore(amount) {
+  //   this.score += amount;
+  //   this.scoreText.text = this.scoreLabel + this.score;
+  // }
 
   addCollectable(amount) {
     this.diamondScore += amount;
